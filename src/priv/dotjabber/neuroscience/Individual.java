@@ -4,7 +4,6 @@ import priv.dotjabber.neuroscience.builder.NeuronBuilder;
 import priv.dotjabber.neuroscience.elements.InInterface;
 import priv.dotjabber.neuroscience.elements.Neuron;
 import priv.dotjabber.neuroscience.elements.OutInterface;
-import priv.dotjabber.neuroscience.elements.utils.EncodingUtil;
 
 public class Individual {
 	private int[] architecture;
@@ -52,11 +51,8 @@ public class Individual {
 		}
 	}
 	
-	public int[] process(int[] data) {
-		
-		// encode signal (parse from integer to binary form);
-		double[] signal = EncodingUtil.encode(data);
-		
+	public double[] process(double[] signal) {
+
 		// push the signal through the in-interface;
 		in.push(signal);
 		
@@ -69,11 +65,8 @@ public class Individual {
 			}
 		}
 		
-		// pop the signal from out-interface;
-		signal = out.pop();
-		
 		// decode that bastard;
-		return EncodingUtil.decode(signal);
+		return out.pop();
 	}
 	
 	public int[] getArchitecture() {

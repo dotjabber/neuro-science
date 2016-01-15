@@ -27,4 +27,8 @@ public class NumberUtil {
 		int rand = RAND.nextInt(Integer.MAX_VALUE); 
 		return (rand == 0) ? 2 : rand;
 	}
+	
+	public static int getRandInt(int max) {
+		return RAND.nextInt(max); 
+	}
 }

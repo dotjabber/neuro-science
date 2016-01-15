@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
 import priv.dotjabber.neuroscience.Individual;
 import priv.dotjabber.neuroscience.elements.Neuron;
 import priv.dotjabber.neuroscience.elements.Synapse;
-import priv.dotjabber.neuroscience.elements.utils.EncodingUtil;
+import priv.dotjabber.neuroscience.elements.utils.CodeUtil;
+import priv.dotjabber.neuroscience.elements.utils.FileUtil;
+import priv.dotjabber.neuroscience.elements.utils.NumberUtil;
 
 public class DNABuilder {
 	public static final String ARCHITECTURE_FORMAT = "A{0}";
@@ -21,7 +23,7 @@ public class DNABuilder {
 	
 	public static final String ARCHITECTURE_REGEX = "A\\[([0-9,]+)\\]";
 	public static final String NEURON_REGEX = "N\\[id:([0-9]+);beta:([01]+);bias:([01]+);function:([01]+)\\]";
-	public static final String SYNAPSE_REGEX = "S\\[id:([0-9]+);neuron:([0-9]+);weight:([01]+);\\]";
+	public static final String SYNAPSE_REGEX = "S\\[id:([0-9]+);neuron:([0-9]+);weight:([01]+)\\]";
 	
 	private static Pattern architecturePattern;
 	private static Pattern neuronPattern;
@@ -51,7 +53,7 @@ public class DNABuilder {
 						SYNAPSE_FORMAT, 
 						String.valueOf(synapse.getId()), 
 						String.valueOf(synapse.getParentId()), 
-						EncodingUtil.encodeDouble(synapse.getWeight())
+						CodeUtil.encodeDouble(synapse.getWeight())
 					);
 					
 					stream.println(synapseDNA);
@@ -80,9 +82,9 @@ public class DNABuilder {
 					Matcher matcher = synapsePattern.matcher(synapseDNA);
 					matcher.find();
 					
-					int synapseId = EncodingUtil.decodeInt(matcher.group(1));
-					int parentId = EncodingUtil.decodeInt(matcher.group(2));
-					double weight = EncodingUtil.decodeDouble(matcher.group(3));
+					int synapseId = Integer.parseInt(matcher.group(1));
+					int parentId = Integer.parseInt(matcher.group(2));
+					double weight = CodeUtil.decodeDouble(matcher.group(3));
 					
 					if(synapse.getId() == synapseId && synapse.getParentId() == parentId) {
 						synapse.setWeight(weight);
@@ -110,9 +112,9 @@ public class DNABuilder {
 				String neuronDNA = MessageFormat.format(
 					NEURON_FORMAT, 
 					String.valueOf(neuron.getId()), 
-					EncodingUtil.encodeDouble(neuron.getBeta()),
-					EncodingUtil.encodeDouble(neuron.getBias()),
-					EncodingUtil.encodeInt(neuron.getFunction())
+					CodeUtil.encodeDouble(neuron.getBeta()),
+					CodeUtil.encodeDouble(neuron.getBias()),
+					CodeUtil.encodeInt(neuron.getFunction())
 				);
 				
 				stream.println(neuronDNA);
@@ -139,10 +141,10 @@ public class DNABuilder {
 				Matcher matcher = neuronPattern.matcher(neuronDNA);
 				matcher.find();
 				
-				int neuronId = EncodingUtil.decodeInt(matcher.group(1));
-				double beta = EncodingUtil.decodeDouble(matcher.group(2));
-				double bias = EncodingUtil.decodeDouble(matcher.group(3));
-				int function = EncodingUtil.decodeInt(matcher.group(4));
+				int neuronId = Integer.parseInt(matcher.group(1));
+				double beta = CodeUtil.decodeDouble(matcher.group(2));
+				double bias = CodeUtil.decodeDouble(matcher.group(3));
+				int function = CodeUtil.decodeInt(matcher.group(4));
 				
 				if(neuronId == neuron.getId()) {
 					neuron.setBeta(beta);
@@ -173,7 +175,6 @@ public class DNABuilder {
 		stream.close();
 	}
 	
-	
 	/**
 	 * 
 	 * @param individualId
@@ -200,6 +201,7 @@ public class DNABuilder {
 	 * @throws FileNotFoundException
 	 */
 	public static void writeIndividualDNA(Individual individual, String individualId) throws FileNotFoundException {
+		NumberUtil.reset();
 		writeArchitectureDNA(individual, individualId);
 		writeNeuronsDNA(individual, individualId);
 		writeSynapsesDNA(individual, individualId);
@@ -212,10 +214,36 @@ public class DNABuilder {
 	 * @throws FileNotFoundException
 	 */
 	public static Individual readIndividualDNA(String individualId) throws FileNotFoundException {
+		NumberUtil.reset();
 		Individual individual = readArchitectureDNA(individualId);
 		readNeuronsDNA(individual, individualId);
 		readSynapsesDNA(individual, individualId);
 		
 		return individual;
+	}
+	
+	/**
+	 * 
+	 * @param individualId
+	 * @return
+	 */
+	public static boolean individualExists(String individualId) {
+		return new File(individualId + "_architecture").exists() && 
+				new File(individualId + "_neurons").exists() && 
+				new File(individualId + "_synapses").exists();
+	}
+	
+	/**
+	 * 
+	 * @param individualId
+	 */
+	public static void individualRemove(String individualId) {
+		new File(individualId + "_architecture").delete();
+		new File(individualId + "_neurons").delete();
+		new File(individualId + "_synapses").delete();
+	}
+	
+	public static void individualsCross(String individualId1, String individualId2, String individualId3) {
+		FileUtil.read(ind)
 	}
 }

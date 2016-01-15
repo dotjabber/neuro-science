@@ -7,6 +7,7 @@ public class Linear extends Function {
 		double beta = argument[0];
 		double x = argument[1];
 		
-		return beta * x;
+		double value = beta * x;
+		return (Math.abs(value) > 1) ? value / Math.abs(value) : value;
 	}
 }

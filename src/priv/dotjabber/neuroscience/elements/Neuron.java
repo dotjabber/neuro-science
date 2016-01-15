@@ -108,4 +108,8 @@ public class Neuron {
 	public void addOutSynapse(Synapse synapse) {
 		outSynapses.add(synapse);
 	}
+	
+	public Collection<Synapse> getOutSynapses() {
+		return outSynapses;
+	}
 }
